@@ -1,16 +1,14 @@
 /**
- * Hardcoded asset inventory (replace with CMS / DB query later).
+ * Hardcoded asset inventory — metadata only.
  *
- * Each asset maps to:
- *   - A Lemon Squeezy variant ID (for a-la-carte ownership checks)
- *   - An R2 object key prefix (used by assetIdToR2Key)
- *   - Metadata for the dashboard and product pages
+ * Lemon Squeezy variant IDs are NOT stored here.
+ * See lib/variant-mapping.ts for the variant ID ↔ asset slug mapping.
  */
 
 export type AssetType = "video" | "audio" | "bundle";
 
 export interface Asset {
-  id: string; // stable slug used as R2 key base and LS variant lookup
+  id: string; // stable slug used as R2 key base
   name: string;
   description: string;
   type: AssetType;
@@ -24,8 +22,6 @@ export interface Asset {
   loopType: string;
   /** Restoration technique */
   technique: string;
-  /** Lemon Squeezy variant ID for a-la-carte purchase */
-  lsVariantId: string;
   /** Price in USD cents */
   priceCents: number;
   /** 480p watermarked preview path (served from /public/previews/) */
@@ -50,7 +46,6 @@ export const ASSETS: Asset[] = [
     resolution: "1920×1080",
     loopType: "Seamless loop",
     technique: "Real-ESRGAN 4× upscale, black crush correction, hue normalization",
-    lsVariantId: "ls_var_haunted_hallway",
     priceCents: 1499,
     previewPath: "/previews/haunted-hallway-480p.mp4",
     thumbnailPath: "/previews/haunted-hallway-thumb.jpg",
@@ -68,7 +63,6 @@ export const ASSETS: Asset[] = [
     resolution: "1920×1080",
     loopType: "Seamless loop",
     technique: "Real-ESRGAN 4×, temporal noise reduction, mist color grading",
-    lsVariantId: "ls_var_graveyard_mist",
     priceCents: 1499,
     previewPath: "/previews/graveyard-mist-480p.mp4",
     thumbnailPath: "/previews/graveyard-mist-thumb.jpg",
@@ -86,7 +80,6 @@ export const ASSETS: Asset[] = [
     resolution: "1920×1080",
     loopType: "Ping-pong loop",
     technique: "Real-ESRGAN 4×, motion deblur, skin-tone correction",
-    lsVariantId: "ls_var_zombie_horde",
     priceCents: 1499,
     previewPath: "/previews/zombie-horde-480p.mp4",
     thumbnailPath: "/previews/zombie-horde-thumb.jpg",
@@ -104,7 +97,6 @@ export const ASSETS: Asset[] = [
     resolution: "1920×1080",
     loopType: "One-shot + idle loop",
     technique: "Real-ESRGAN 4×, green-screen key, edge refinement",
-    lsVariantId: "ls_var_spider_descent",
     priceCents: 1499,
     previewPath: "/previews/spider-descent-480p.mp4",
     thumbnailPath: "/previews/spider-descent-thumb.jpg",
@@ -122,7 +114,6 @@ export const ASSETS: Asset[] = [
     resolution: "1920×1080",
     loopType: "Seamless loop",
     technique: "Real-ESRGAN 4×, exposure correction, lightning bloom enhancement",
-    lsVariantId: "ls_var_lightning_storm",
     priceCents: 1499,
     previewPath: "/previews/lightning-storm-480p.mp4",
     thumbnailPath: "/previews/lightning-storm-thumb.jpg",
@@ -140,7 +131,6 @@ export const ASSETS: Asset[] = [
     resolution: "1920×1080",
     loopType: "Seamless loop",
     technique: "Real-ESRGAN 4×, transparency mask correction, luminance boost",
-    lsVariantId: "ls_var_floating_ghosts",
     priceCents: 1499,
     previewPath: "/previews/floating-ghosts-480p.mp4",
     thumbnailPath: "/previews/floating-ghosts-thumb.jpg",
@@ -158,7 +148,6 @@ export const ASSETS: Asset[] = [
     resolution: "1920×1080",
     loopType: "Seamless loop",
     technique: "Real-ESRGAN 4×, green-channel boost, smoke simulation sharpening",
-    lsVariantId: "ls_var_cauldron_bubbling",
     priceCents: 1499,
     previewPath: "/previews/cauldron-bubbling-480p.mp4",
     thumbnailPath: "/previews/cauldron-bubbling-thumb.jpg",
@@ -176,7 +165,6 @@ export const ASSETS: Asset[] = [
     resolution: "1920×1080",
     loopType: "Triggered scare + idle",
     technique: "Real-ESRGAN 4×, saturation correction, motion sharpening",
-    lsVariantId: "ls_var_clown_popup",
     priceCents: 1499,
     previewPath: "/previews/clown-popup-480p.mp4",
     thumbnailPath: "/previews/clown-popup-thumb.jpg",
@@ -194,7 +182,6 @@ export const ASSETS: Asset[] = [
     resolution: "WAV 24-bit / 48 kHz",
     loopType: "Seamless loop",
     technique: "AI noise reduction, spatial widening, dynamic range expansion",
-    lsVariantId: "ls_var_ambient_horror_score",
     priceCents: 1499,
     previewPath: "/previews/ambient-horror-score-preview.mp3",
     thumbnailPath: "/previews/ambient-horror-score-thumb.jpg",
@@ -212,7 +199,6 @@ export const ASSETS: Asset[] = [
     resolution: "WAV 24-bit / 48 kHz",
     loopType: "One-shots",
     technique: "AI noise reduction, transient sharpening, loudness normalization",
-    lsVariantId: "ls_var_scream_sfx_pack",
     priceCents: 1499,
     previewPath: "/previews/scream-sfx-pack-preview.mp3",
     thumbnailPath: "/previews/scream-sfx-pack-thumb.jpg",
@@ -220,9 +206,6 @@ export const ASSETS: Asset[] = [
     tags: ["audio", "sfx", "scream", "stinger", "one-shot"],
   },
 ];
-
-/** Lemon Squeezy product ID for the season pass */
-export const SEASON_PASS_LS_PRODUCT_ID = "ls_prod_season_pass_2024";
 
 /** Season pass price */
 export const SEASON_PASS_PRICE_CENTS = 19999;
