@@ -3,17 +3,18 @@
  *
  * URL: /dashboard?email=buyer@example.com
  *
- * Server component: fetches the buyer's owned asset IDs server-side,
+ * Server component: fetches the buyer's owned assets (with order IDs) server-side,
  * then renders the asset list with client-side DownloadButton components.
  *
- * In production replace the email query param with a proper session cookie
- * from your auth provider (NextAuth, Clerk, etc.).
+ * Each DownloadButton receives both `email` and `orderId` so the signed-url
+ * API can verify ownership by binding the order to the email at Lemon Squeezy —
+ * preventing pure email-enumeration attacks (P2 security model).
  */
 
 import { Suspense } from "react";
 import Link from "next/link";
-import { getOwnedAssetIds } from "@/lib/lemon-squeezy";
-import { ASSETS, SEASON_PASS_ASSETS, getAssetById } from "@/lib/inventory";
+import { getOwnedAssets, OwnedAsset } from "@/lib/lemon-squeezy";
+import { SEASON_PASS_ASSETS, getAssetById, Asset } from "@/lib/inventory";
 import DownloadButton from "@/components/DownloadButton";
 import AssetTypeIcon from "@/components/AssetTypeIcon";
 
@@ -28,28 +29,30 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     return <EmailGate />;
   }
 
-  // Fetch owned assets server-side
-  let ownedIds: string[] = [];
+  let ownedAssets: OwnedAsset[] = [];
   let fetchError: string | null = null;
 
   try {
-    ownedIds = await getOwnedAssetIds(email);
+    ownedAssets = await getOwnedAssets(email);
   } catch (err) {
     fetchError =
       err instanceof Error ? err.message : "Could not load your library.";
   }
 
-  const ownedAssets = ownedIds
-    .map((id) => getAssetById(id))
-    .filter(Boolean) as typeof ASSETS;
+  const isSeasonPass = ownedAssets.length === SEASON_PASS_ASSETS.length;
 
-  const isSeasonPass = ownedIds.length === SEASON_PASS_ASSETS.length;
+  const resolvedAssets = ownedAssets
+    .map((owned) => {
+      const asset = getAssetById(owned.assetId);
+      return asset ? { asset, orderId: owned.orderId } : null;
+    })
+    .filter(Boolean) as Array<{ asset: Asset; orderId: string }>;
+
+  const videoAssets = resolvedAssets.filter((r) => r.asset.type === "video");
+  const audioAssets = resolvedAssets.filter((r) => r.asset.type === "audio");
 
   return (
     <main className="min-h-screen bg-[#121212] text-white">
-      {/* ------------------------------------------------------------------ */}
-      {/* Header */}
-      {/* ------------------------------------------------------------------ */}
       <header className="border-b border-white/10 px-4 py-4 sm:px-8">
         <div className="mx-auto flex max-w-6xl items-center justify-between">
           <Link href="/" className="text-xl font-bold tracking-tight text-orange-400">
@@ -60,9 +63,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       </header>
 
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-8">
-        {/* ---------------------------------------------------------------- */}
         {/* Hero strip */}
-        {/* ---------------------------------------------------------------- */}
         <div className="mb-8">
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold tracking-tight">My Library</h1>
@@ -75,14 +76,14 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           {isSeasonPass ? (
             <p className="mt-2 text-gray-400">
               You own the full season pass —{" "}
-              <strong className="text-white">{ownedAssets.length} assets</strong> available.
-              Click any button below to generate a 4-hour download link directly from
+              <strong className="text-white">{resolvedAssets.length} assets</strong>{" "}
+              available. Click any button to generate a 4-hour download link from
               Cloudflare&apos;s edge. No ZIPs, no waiting.
             </p>
           ) : (
             <p className="mt-2 text-gray-400">
-              {ownedAssets.length} asset{ownedAssets.length !== 1 ? "s" : ""} in your
-              library. Each button generates a fresh 4-hour link from Cloudflare R2.{" "}
+              {resolvedAssets.length} asset
+              {resolvedAssets.length !== 1 ? "s" : ""} in your library.{" "}
               <Link href="/" className="text-orange-400 underline hover:text-orange-300">
                 Browse more assets →
               </Link>
@@ -90,19 +91,14 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           )}
         </div>
 
-        {/* ---------------------------------------------------------------- */}
         {/* Error state */}
-        {/* ---------------------------------------------------------------- */}
         {fetchError && (
           <div className="mb-8 rounded-xl border border-red-700/50 bg-red-900/20 p-5">
             <p className="font-semibold text-red-300">Could not load your library</p>
             <p className="mt-1 text-sm text-red-400">{fetchError}</p>
             <p className="mt-2 text-sm text-gray-400">
               Try refreshing the page. If the issue persists,{" "}
-              <a
-                href="mailto:support@hauntsync.com"
-                className="text-orange-400 underline"
-              >
+              <a href="mailto:support@hauntsync.com" className="text-orange-400 underline">
                 contact support
               </a>
               .
@@ -110,10 +106,8 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           </div>
         )}
 
-        {/* ---------------------------------------------------------------- */}
         {/* Empty state */}
-        {/* ---------------------------------------------------------------- */}
-        {!fetchError && ownedAssets.length === 0 && (
+        {!fetchError && resolvedAssets.length === 0 && (
           <div className="rounded-2xl border border-white/10 bg-white/5 px-8 py-16 text-center">
             <p className="text-4xl">👻</p>
             <h2 className="mt-4 text-xl font-semibold">Nothing here yet</h2>
@@ -129,32 +123,21 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           </div>
         )}
 
-        {/* ---------------------------------------------------------------- */}
         {/* Asset grid */}
-        {/* ---------------------------------------------------------------- */}
-        {ownedAssets.length > 0 && (
+        {resolvedAssets.length > 0 && (
           <>
-            {/* Video assets */}
-            <AssetSection
-              title="Video Loops"
-              assets={ownedAssets.filter((a) => a.type === "video")}
-              email={email}
-            />
-
-            {/* Audio assets */}
+            <AssetSection title="Video Loops" items={videoAssets} email={email} />
             <AssetSection
               title="Audio"
-              assets={ownedAssets.filter((a) => a.type === "audio")}
+              items={audioAssets}
               email={email}
               className="mt-12"
             />
           </>
         )}
 
-        {/* ---------------------------------------------------------------- */}
         {/* Season pass upsell */}
-        {/* ---------------------------------------------------------------- */}
-        {!isSeasonPass && !fetchError && ownedAssets.length > 0 && (
+        {!isSeasonPass && !fetchError && resolvedAssets.length > 0 && (
           <div className="mt-14 rounded-2xl border border-orange-600/30 bg-orange-950/30 p-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -183,30 +166,30 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 }
 
 // ---------------------------------------------------------------------------
-// Sub-components (server-side, no state needed)
+// Sub-components
 // ---------------------------------------------------------------------------
 
 function AssetSection({
   title,
-  assets,
+  items,
   email,
   className = "",
 }: {
   title: string;
-  assets: typeof ASSETS;
+  items: Array<{ asset: Asset; orderId: string }>;
   email: string;
   className?: string;
 }) {
-  if (assets.length === 0) return null;
+  if (items.length === 0) return null;
 
   return (
     <section className={className}>
       <h2 className="mb-4 text-sm font-semibold uppercase tracking-widest text-gray-500">
-        {title} ({assets.length})
+        {title} ({items.length})
       </h2>
 
       <ul className="divide-y divide-white/8 rounded-2xl border border-white/10 overflow-hidden">
-        {assets.map((asset) => (
+        {items.map(({ asset, orderId }) => (
           <li
             key={asset.id}
             className="group flex flex-col gap-4 bg-white/5 px-5 py-5 transition-colors hover:bg-white/8 sm:flex-row sm:items-start sm:gap-6"
@@ -240,12 +223,13 @@ function AssetSection({
               <p className="mt-1 text-xs text-gray-600 italic">{asset.technique}</p>
             </div>
 
-            {/* Download button — client component */}
+            {/* Download button — client component receives orderId (P2) */}
             <div className="shrink-0 sm:pt-0.5">
               <Suspense fallback={<DownloadButtonSkeleton />}>
                 <DownloadButton
                   assetId={asset.id}
                   email={email}
+                  orderId={orderId}
                   fileSize={asset.fileSize}
                 />
               </Suspense>
@@ -294,9 +278,7 @@ function EmailGate() {
 }
 
 function DownloadButtonSkeleton() {
-  return (
-    <div className="h-10 w-44 animate-pulse rounded-lg bg-white/10" />
-  );
+  return <div className="h-10 w-44 animate-pulse rounded-lg bg-white/10" />;
 }
 
 function formatDuration(seconds: number): string {

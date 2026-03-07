@@ -45,7 +45,9 @@ export default function ProductPage({ params }: PageProps) {
   ).slice(0, 4);
 
   const isAudio = asset.type === "audio";
-  const checkoutUrl = `https://hauntsync.lemonsqueezy.com/checkout/buy/${asset.lsVariantId}`;
+  // Variant ID lives in variant-mapping.ts — product pages link to the store root
+  // for now; replace with a direct LS checkout link once variant IDs are known.
+  const checkoutUrl = `https://hauntsync.lemonsqueezy.com/checkout?product=${asset.id}`;
 
   return (
     <main className="min-h-screen bg-[#121212] text-white">
