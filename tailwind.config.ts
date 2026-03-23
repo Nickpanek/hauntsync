@@ -9,8 +9,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        background: "#121212",
+        "neon-red": "#FF0000",
+        "neon-green": "#00FF00",
+        "neon-yellow": "#FFFF00",
+      },
+      fontFamily: {
+        creepster: ["var(--font-creepster)", "cursive"],
+        inter: ["var(--font-inter)", "sans-serif"],
       },
     },
   },
