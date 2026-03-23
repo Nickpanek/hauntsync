@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Header from "@/components/Header";
 
 // TODO: Update canonical URL if deploying to a custom domain other than hauntsync.com
 export const metadata: Metadata = {
@@ -63,7 +62,6 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased bg-background text-[rgba(255,255,255,0.87)] font-dm-sans">
-        <Header />
         {children}
       </body>
     </html>

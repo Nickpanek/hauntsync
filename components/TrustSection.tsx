@@ -46,16 +46,7 @@ export default function TrustSection() {
         {/* Divider */}
         <div className="my-12 h-px bg-[rgba(255,255,255,0.08)]" />
 
-        {/* Pull quote */}
-        <figure className="mx-auto max-w-2xl">
-          <blockquote className="border-l-4 border-[#00FF88] pl-6 text-lg italic leading-relaxed text-[rgba(255,255,255,0.70)]">
-            {/* TODO: Replace with a real testimonial from an early customer */}
-            &ldquo;[Your quote here — reach out to early customers for a testimonial]&rdquo;
-          </blockquote>
-          <figcaption className="mt-4 pl-6 text-sm text-[rgba(255,255,255,0.40)]">
-            — [Customer name, haunt or event name]
-          </figcaption>
-        </figure>
+        {/* TODO: Add testimonial once first customers respond */}
 
         {/* Commercial licensing note */}
         <p className="mt-12 text-center text-sm text-[rgba(255,255,255,0.40)]">

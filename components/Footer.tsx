@@ -1,9 +1,7 @@
-// TODO: Replace YOUR_GUMROAD_URL with the actual Gumroad store URL
-const GUMROAD_URL = "YOUR_GUMROAD_URL";
+import { GUMROAD_URL } from "@/lib/config";
 
 const navLinks = [
   { label: "Browse Loops",    href: GUMROAD_URL, external: true },
-  { label: "About",           href: "/about",    external: false },
   { label: "Contact",         href: "mailto:nick@patternripple.com", external: true },
   { label: "Spoonflower Shop", href: "https://www.spoonflower.com/profiles/nickpanek", external: true },
 ];
