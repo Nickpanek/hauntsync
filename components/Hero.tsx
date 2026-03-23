@@ -1,7 +1,6 @@
 "use client";
 
-// TODO: Replace YOUR_GUMROAD_URL with the actual Gumroad store URL
-const GUMROAD_URL = "YOUR_GUMROAD_URL";
+import { GUMROAD_URL } from "@/lib/config";
 
 /** Fog particle blob — pure CSS, zero JS overhead */
 function FogBlob({

@@ -1,7 +1,4 @@
-import Image from "next/image";
-
-// TODO: Replace YOUR_GUMROAD_URL with actual product links
-const GUMROAD_URL = "YOUR_GUMROAD_URL";
+import { GUMROAD_URL } from "@/lib/config";
 
 type Badge = "NEW" | "BESTSELLER" | "LOOP";
 
@@ -10,20 +7,18 @@ interface ProductCard {
   name: string;
   price: string;
   badge: Badge;
-  // TODO: Replace with actual product images in /public/images/
-  image: string;
 }
 
 const PRODUCTS: ProductCard[] = [
-  { id: 1, name: "Graveyard Spirits",    price: "$14.99", badge: "BESTSELLER", image: "/images/product-1.jpg" },
-  { id: 2, name: "Hellfire Rising",      price: "$14.99", badge: "NEW",        image: "/images/product-2.jpg" },
-  { id: 3, name: "Demon Possession",     price: "$14.99", badge: "LOOP",       image: "/images/product-3.jpg" },
-  { id: 4, name: "Gothic Apparitions",   price: "$14.99", badge: "BESTSELLER", image: "/images/product-4.jpg" },
-  { id: 5, name: "Spectral Fog Walk",    price: "$14.99", badge: "NEW",        image: "/images/product-5.jpg" },
-  { id: 6, name: "Undead Uprising",      price: "$14.99", badge: "LOOP",       image: "/images/product-6.jpg" },
-  { id: 7, name: "Cursed Mirror",        price: "$14.99", badge: "BESTSELLER", image: "/images/product-7.jpg" },
-  { id: 8, name: "Shadowland Portal",    price: "$14.99", badge: "NEW",        image: "/images/product-8.jpg" },
-  { id: 9, name: "Bone Cathedral",       price: "$14.99", badge: "LOOP",       image: "/images/product-9.jpg" },
+  { id: 1, name: "Graveyard Spirits",    price: "$14.99", badge: "BESTSELLER" },
+  { id: 2, name: "Hellfire Rising",      price: "$14.99", badge: "NEW" },
+  { id: 3, name: "Demon Possession",     price: "$14.99", badge: "LOOP" },
+  { id: 4, name: "Gothic Apparitions",   price: "$14.99", badge: "BESTSELLER" },
+  { id: 5, name: "Spectral Fog Walk",    price: "$14.99", badge: "NEW" },
+  { id: 6, name: "Undead Uprising",      price: "$14.99", badge: "LOOP" },
+  { id: 7, name: "Cursed Mirror",        price: "$14.99", badge: "BESTSELLER" },
+  { id: 8, name: "Shadowland Portal",    price: "$14.99", badge: "NEW" },
+  { id: 9, name: "Bone Cathedral",       price: "$14.99", badge: "LOOP" },
 ];
 
 const BADGE_COLORS: Record<Badge, string> = {
@@ -67,19 +62,10 @@ export default function ProductGrid() {
                 </span>
               </div>
 
-              {/* Thumbnail — 16:9 shimmer placeholder until real images are added */}
-              <div className="relative aspect-video w-full overflow-hidden bg-[#2A2A2A]">
-                {/* Shimmer visible behind image while it loads */}
+              {/* Thumbnail — shimmer placeholder until real images are dropped in */}
+              <div className="relative aspect-video w-full overflow-hidden rounded-t-xl bg-[#2A2A2A]">
                 <div className="shimmer absolute inset-0" aria-hidden="true" />
-                {/* TODO: Replace placeholder with real product image */}
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  fill
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  loading="lazy"
-                />
+                {/* TODO: Drop real product thumbnail here — replace shimmer div with <img> */}
               </div>
 
               {/* Meta */}
