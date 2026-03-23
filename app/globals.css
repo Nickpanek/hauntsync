@@ -3,25 +3,51 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #121212;
+  --foreground: #ededed;
+  --neon-red: #FF0000;
+  --neon-green: #00FF00;
+  --neon-yellow: #FFFF00;
+  --font-creepster: "Creepster", cursive;
+  --font-inter: "Inter", system-ui, sans-serif;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter);
+}
+
+.font-creepster {
+  font-family: var(--font-creepster);
+}
+
+.font-inter {
+  font-family: var(--font-inter);
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .neon-red-glow {
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.7), 0 0 30px rgba(255, 0, 0, 0.4);
+  }
+
+  .neon-green-glow {
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.7), 0 0 30px rgba(0, 255, 0, 0.4);
+  }
+
+  .neon-yellow-glow {
+    text-shadow: 0 0 10px rgba(255, 255, 0, 0.7), 0 0 30px rgba(255, 255, 0, 0.4);
+  }
+
+  .box-neon-red {
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5), 0 0 30px rgba(255, 0, 0, 0.2);
+  }
+
+  .box-neon-green {
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5), 0 0 30px rgba(0, 255, 0, 0.2);
   }
 }
