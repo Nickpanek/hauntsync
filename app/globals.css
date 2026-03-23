@@ -2,52 +2,109 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Design system tokens ─────────────────────────────────────────────────── */
 :root {
-  --background: #121212;
-  --foreground: #ededed;
-  --neon-red: #FF0000;
-  --neon-green: #00FF00;
-  --neon-yellow: #FFFF00;
-  --font-creepster: "Creepster", cursive;
-  --font-inter: "Inter", system-ui, sans-serif;
+  /* Surfaces — never use pure #000000 (OLED smearing) */
+  --background:       #121212;
+  --surface:          #1E1E1E;
+  --surface-raised:   #2A2A2A;
+  /* Text */
+  --text-primary:     rgba(255, 255, 255, 0.87);
+  --text-secondary:   rgba(255, 255, 255, 0.60);
+  --text-muted:       rgba(255, 255, 255, 0.38);
+  /* Accents */
+  --accent:           #00FF88;
+  --warning:          #FF6B35;
+  --danger:           #FF4444;
+  /* Borders */
+  --border-subtle:    rgba(255, 255, 255, 0.08);
+  --border-medium:    rgba(255, 255, 255, 0.16);
+  /* Font families */
+  --font-cinzel:      "Cinzel", serif;
+  --font-dm-sans:     "DM Sans", system-ui, sans-serif;
+  --font-mono:        "JetBrains Mono", ui-monospace, monospace;
+}
+
+/* ─── Base ──────────────────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-inter);
+  color: var(--text-primary);
+  font-family: var(--font-dm-sans);
 }
 
-.font-creepster {
-  font-family: var(--font-creepster);
+/* ─── Font helpers (used via className) ────────────────────────────────────── */
+.font-cinzel  { font-family: var(--font-cinzel); }
+.font-dm-sans { font-family: var(--font-dm-sans); }
+.font-mono    { font-family: var(--font-mono); }
+
+/* ─── Fog / particle animation ─────────────────────────────────────────────── */
+@keyframes fog-drift-1 {
+  0%, 100% { transform: translateX(0)    translateY(0)    scale(1);    opacity: 0.04; }
+  33%      { transform: translateX(60px) translateY(-30px) scale(1.1); opacity: 0.07; }
+  66%      { transform: translateX(-40px) translateY(20px) scale(0.95); opacity: 0.03; }
 }
 
-.font-inter {
-  font-family: var(--font-inter);
+@keyframes fog-drift-2 {
+  0%, 100% { transform: translateX(0)    translateY(0)    scale(1);    opacity: 0.05; }
+  40%      { transform: translateX(-80px) translateY(40px) scale(1.15); opacity: 0.08; }
+  70%      { transform: translateX(50px) translateY(-20px) scale(0.9); opacity: 0.03; }
 }
 
+@keyframes fog-drift-3 {
+  0%, 100% { transform: translateX(0)   translateY(0)   scale(1.05); opacity: 0.06; }
+  50%      { transform: translateX(30px) translateY(50px) scale(1.2); opacity: 0.04; }
+}
+
+@keyframes fog-drift-4 {
+  0%, 100% { transform: translateX(0)    translateY(0)    scale(1);    opacity: 0.03; }
+  45%      { transform: translateX(-60px) translateY(-40px) scale(1.1); opacity: 0.06; }
+  80%      { transform: translateX(70px) translateY(30px) scale(0.92); opacity: 0.04; }
+}
+
+/* ─── Shimmer skeleton animation ───────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--surface) 25%,
+    var(--surface-raised) 50%,
+    var(--surface) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+/* ─── Accordion (details/summary) ──────────────────────────────────────────── */
+details summary {
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+details summary::-webkit-details-marker { display: none; }
+
+details[open] .faq-chevron { transform: rotate(180deg); }
+.faq-chevron { transition: transform 0.25s ease; }
+
+details .faq-body {
+  overflow: hidden;
+}
+
+/* ─── Utility ───────────────────────────────────────────────────────────────── */
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+  .text-balance { text-wrap: balance; }
 
-  .neon-red-glow {
-    text-shadow: 0 0 10px rgba(255, 0, 0, 0.7), 0 0 30px rgba(255, 0, 0, 0.4);
+  .accent-glow {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
   }
-
-  .neon-green-glow {
-    text-shadow: 0 0 10px rgba(0, 255, 0, 0.7), 0 0 30px rgba(0, 255, 0, 0.4);
-  }
-
-  .neon-yellow-glow {
-    text-shadow: 0 0 10px rgba(255, 255, 0, 0.7), 0 0 30px rgba(255, 255, 0, 0.4);
-  }
-
-  .box-neon-red {
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5), 0 0 30px rgba(255, 0, 0, 0.2);
-  }
-
-  .box-neon-green {
-    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5), 0 0 30px rgba(0, 255, 0, 0.2);
+  .accent-glow-lg {
+    box-shadow: 0 0 40px rgba(0, 255, 136, 0.4);
   }
 }
